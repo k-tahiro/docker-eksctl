@@ -1,6 +1,7 @@
 FROM python:alpine
 
-RUN pip install awscli
+RUN pip install awscli \
+    && pip install boto3
 
 RUN apk add --no-cache curl
 
