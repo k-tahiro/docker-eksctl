@@ -1,12 +1,17 @@
 FROM python:alpine
 
-RUN pip install awscli \
-    && pip install boto3
+# install aws client
+RUN pip install awscli boto3
 
-RUN apk add --no-cache curl
+# install kubectl
+ADD https://storage.googleapis.com/kubernetes-release/release/v1.11.5/bin/linux/amd64/kubectl /usr/local/bin/kubectl
+RUN chmod +x /usr/local/bin/kubectl
 
+# install eksctl
 # https://github.com/weaveworks/eksctl#usage
-RUN curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
+ARG EKSCTL_VERSION=latest_release
+RUN apk add --no-cache curl groff \
+    && curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/${EKSCTL_VERSION}/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp \
     && mv /tmp/eksctl /usr/local/bin
 
-ENTRYPOINT [ "eksctl" ]
+CMD [ "eksctl" ]
